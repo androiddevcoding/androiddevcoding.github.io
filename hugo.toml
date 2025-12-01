@@ -1,0 +1,11 @@
+baseURL = "https://androiddevcoding.github.io/"
+languageCode = "ru-ru"
+title = "Developer Notes"
+theme = "PaperMod"
+publishDir = "docs"
+
+[pagination]
+  pagerSize = 10
+  
+[params]
+  defaultTheme = "auto"
