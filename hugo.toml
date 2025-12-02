@@ -9,3 +9,4 @@ publishDir = "docs"
   
 [params]
   defaultTheme = "auto"
+  disableSpecial1stPost = true
