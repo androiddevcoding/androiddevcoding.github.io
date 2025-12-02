@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Baseline Note Post | Developer Notes</title>
+<meta name="keywords" content="">
+<meta name="description" content="Привет. Это небольшая заметка о том, с чем я столкнулся при работе с baseline profile.
+Коротко: baseline профили помогают повышать скорость выполнения кода примерно на 30% уже с первого запуска.
+Но статья не про то, как их настраивать по документации, а про другую боль - что делать, если приложение активно использует Remote Config, а baseline гоняется на релизной сборке.
+Контекст задачи.
+Допустим, у нас есть проект, где уже настроен baseline, и внутри приложения есть Remote Config, который позволяет гибко менять поведение фич.
+Baseline profile у нас гоняется на релизной версии, а значит Remote Config там тоже будет релизный, с боевым окружением.
+Remote Config - может быть любой от своей реализации до Firebase Remote Config. У вас многомодульная архитектура.">
+<meta name="author" content="">
+<link rel="canonical" href="https://androiddevcoding.github.io/posts/baseline-note-post/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.343cc480b9ffc8f04ccbe5e968ad674880cab773ec19905e93033065c1e7a804.css" integrity="sha256-NDzEgLn/yPBMy&#43;XpaK1nSIDKt3PsGZBekwMwZcHnqAQ=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://androiddevcoding.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://androiddevcoding.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://androiddevcoding.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://androiddevcoding.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://androiddevcoding.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://androiddevcoding.github.io/posts/baseline-note-post/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+        @media (prefers-color-scheme: light) {
+            .list::-webkit-scrollbar-thumb {
+                border-color: var(--code-bg);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script><meta property="og:url" content="https://androiddevcoding.github.io/posts/baseline-note-post/">
+  <meta property="og:site_name" content="Developer Notes">
+  <meta property="og:title" content="Baseline Note Post">
+  <meta property="og:description" content="Привет. Это небольшая заметка о том, с чем я столкнулся при работе с baseline profile.
+Коротко: baseline профили помогают повышать скорость выполнения кода примерно на 30% уже с первого запуска. Но статья не про то, как их настраивать по документации, а про другую боль - что делать, если приложение активно использует Remote Config, а baseline гоняется на релизной сборке.
+Контекст задачи. Допустим, у нас есть проект, где уже настроен baseline, и внутри приложения есть Remote Config, который позволяет гибко менять поведение фич. Baseline profile у нас гоняется на релизной версии, а значит Remote Config там тоже будет релизный, с боевым окружением. Remote Config - может быть любой от своей реализации до Firebase Remote Config. У вас многомодульная архитектура.">
+  <meta property="og:locale" content="ru-ru">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-01T19:38:22+03:00">
+    <meta property="article:modified_time" content="2025-12-01T19:38:22+03:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Baseline Note Post">
+<meta name="twitter:description" content="Привет. Это небольшая заметка о том, с чем я столкнулся при работе с baseline profile.
+Коротко: baseline профили помогают повышать скорость выполнения кода примерно на 30% уже с первого запуска.
+Но статья не про то, как их настраивать по документации, а про другую боль - что делать, если приложение активно использует Remote Config, а baseline гоняется на релизной сборке.
+Контекст задачи.
+Допустим, у нас есть проект, где уже настроен baseline, и внутри приложения есть Remote Config, который позволяет гибко менять поведение фич.
+Baseline profile у нас гоняется на релизной версии, а значит Remote Config там тоже будет релизный, с боевым окружением.
+Remote Config - может быть любой от своей реализации до Firebase Remote Config. У вас многомодульная архитектура.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://androiddevcoding.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Baseline Note Post",
+      "item": "https://androiddevcoding.github.io/posts/baseline-note-post/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Baseline Note Post",
+  "name": "Baseline Note Post",
+  "description": "Привет. Это небольшая заметка о том, с чем я столкнулся при работе с baseline profile.\nКоротко: baseline профили помогают повышать скорость выполнения кода примерно на 30% уже с первого запуска. Но статья не про то, как их настраивать по документации, а про другую боль - что делать, если приложение активно использует Remote Config, а baseline гоняется на релизной сборке.\nКонтекст задачи. Допустим, у нас есть проект, где уже настроен baseline, и внутри приложения есть Remote Config, который позволяет гибко менять поведение фич. Baseline profile у нас гоняется на релизной версии, а значит Remote Config там тоже будет релизный, с боевым окружением. Remote Config - может быть любой от своей реализации до Firebase Remote Config. У вас многомодульная архитектура.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "Привет. Это небольшая заметка о том, с чем я столкнулся при работе с baseline profile.\nКоротко: baseline профили помогают повышать скорость выполнения кода примерно на 30% уже с первого запуска. Но статья не про то, как их настраивать по документации, а про другую боль - что делать, если приложение активно использует Remote Config, а baseline гоняется на релизной сборке.\nКонтекст задачи. Допустим, у нас есть проект, где уже настроен baseline, и внутри приложения есть Remote Config, который позволяет гибко менять поведение фич. Baseline profile у нас гоняется на релизной версии, а значит Remote Config там тоже будет релизный, с боевым окружением. Remote Config - может быть любой от своей реализации до Firebase Remote Config. У вас многомодульная архитектура.\nОтсюда проблема: как в baseline сборке запускать условно “дебажный” Remote Config, чтобы baseline генерировался в нужном окружении и при этом не ломать релиз.\nНа практике сразу вылезло несколько ограничений:\nтесты baseline/benchmark работают в отдельном процессе есть ограничения DI во время запуска baseline нужно не допустить утечки тестового кода в настоящую релизную сборку Проблема №1. Почему не получилось просто заинжектить всё через DI Первая мысль была простая: в тестах BaselineProfileGenerator мы сможем заинжектить DI и разрулить окружение Remote Config. То есть в тесте мы получаем доступ к DI и переключаем Remote Config из теста напрямую. На практике оказалось, что это невозможно по самой природе запуска baseline-тестов:\nтесты действительно запускаются и прогоняются в отдельном процессе когда приложение может быть уже закрыто, вручную (а тесты продолжают жить своей жизнью) что говорит о отдельном процесс DI, который у нас определен в приложении в app, мы не можем получить из другого процесса/из модуля macrobenchmark То есть вариант “в тесте берем RemoteConfigProvider из DI и дергаем его напрямую” просто не работает. Из macrobenchmark так же мы не можем получить модуль app.\nПроблема №2. Варианты переключения окружения в тестах. Раз DI не подходит, нужно искать способ менять Remote Config снаружи - не залезая напрямую в DI, а дергая приложение извне. Сразу на ум приходят базовые компоненты Android-приложения:\nActivity Есть нюансы. Мы не сможем динамически менять параметры в середине сценария, нам придется каждый раз открывать Activity. Это неудобно и не очень красиво для автоматизации.\nContentProvider Можно использовать как точку входа, но он срабатывает слишком рано и не дает удобного управляемого протокола.\nBroadcastReceiver Как раз этот вариант показался самым гибким:\nмы можем точечно менять конфиги есть управляемый контракт через action и extras легко дергается из тестов (через adb) В итоге выбор пал на BroadcastReceiver.\nКак через BroadcastReceiver поменять Remote Config. Я создал WbConfigReceiver, который принимает команду от теста, внутри дергает Remote Config и переключает нужный параметр, плюс при необходимости перезапускает приложение.\nПсевдокод для теста:\n@RunWith(AndroidJUnit4::class) class RandomBaselineTest { private val packageName = \"com.example.randomapp\" @Test fun applyRemoteConfigAndRun() { sendAdbBroadcast(\"feature_x_enabled\", \"true\") killApp() runFlow() } private fun sendAdbBroadcast(name: String, value: String) { device.executeShellCommand( \"am broadcast \" + \"-a com.example.randomapp.SET_WB_CONFIG \" + \"--es name $name \" + \"--es value $value\" ) } } И сам ресивер примерно такой:\nclass WbConfigReceiver : BroadcastReceiver() { override fun onReceive(context: Context?, intent: Intent?) { if (intent?.action != \"com.example.randomapp.SET_WB_CONFIG\") return val name = intent.getStringExtra(\"name\") ?: return val value = intent.getStringExtra(\"value\") ?: return WbApi().setConfig(name, value) } } В целом это работало хорошо, пока не появилась следующая проблема.\nПроблема №3. Этот WbConfigReceiver нельзя выпускать в релиз По безопасности и здравому смыслу такой механизм нельзя оставлять доступным в релизной сборке. Решение: вынести этот код в отдельный билд-тип, который используется только для baseline и не попадает в настоящий release. Билд-тип вида nonMinifiedRelease (суть в том, что это специальный вариант для baseline/benchmark). Он присутствует только в вариантах для baseline и не попадает в продактовый release.\nПроблема №4. Как определить окружение baseline внутри DI Допустим, у нас в DI есть простое разветвление для релиза и дебага:\nif (BuildConfig.DEBUG) { enableDebugRemoteConfig() } else { enableRealRemoteConfig() } И мы хотим добавить к этому baseline. Напрашивается что-то вроде:\nif (BuildConfig.DEBUG || BuildConfig.IS_BASELINE_RELEASE) { enableDebugRemoteConfig() } else { enableRealRemoteConfig() } Теоретически это звучит логично, но дальше возникает вопрос:\nа как именно задавать и определять IS_BASELINE_RELEASE, чтобы понимать, когда у нас baseline, а когда обычный релиз. Можно было бы попробовать “зашить” переменную так:\nbuildTypes { release { buildConfigField \"Boolean\", \"IS_BASELINE_RELEASE\", \"true\" } debug { buildConfigField \"Boolean\", \"IS_BASELINE_RELEASE\", \"false\" } } И в теории это бы работало, но дальше в дело вмешивается CI и automaticGenerationDuringBuild.\nautomaticGenerationDuringBuild и почему простого флага мало Локально, если руками запустить baseline командой из Gradle:\n./gradlew generateReleaseBaselineProfile все будет отрабатывать корректно.\nНо если у вас есть окружение, где релизы собирает CI, там сценарий обычно такой:\nзапускается сборка релиза при включенном automaticGenerationDuringBuild baseline профили генерируются автоматически во время билда проекта, без ручного запуска macrobenchmark-тестов automaticGenerationDuringBuild - это флаг, который включает или выключает автоматическую генерацию baseline профилей во время сборки проекта.\nИ вот тут возникает проблема: при билде релиза у нас запускается автоматическая генерация baseline. И нужно два окружения.\nИз-за automaticGenerationDuringBuild у нас при вызове runRelease будет что-то типо:\nЗапуск generateReleaseBaselineProfile Запуск assembleRelease Готовая апк с вшитой оптимизацией baseline. Но как нам определить и установить что в 1 пункте должно быть окружение дебаг для RemoteConfig а для 2 пункта окружение релиз для RemoteConfig.\nSharedPreferences Первая идея - хранить флаг в SharedPreferences и переключать его когда мы будем запускать тест, а читать его в DI при переключение RemoteConfig. Это будет работать в каких-то сценариях, но выглядит костыльно и ненадежно.\nCI переменные Вторая идея - брать флаг из CI переменных. Но переменная будет одинаковой и при запуске baseline, и при обычном релизе, потому что собирается один и тот же билд. Определить изнутри приложения, baseline это или просто release, таким способом не получается.\nИтоговое решение №4: отдельный BuildConfig модуль и флаг В итоге рабочее решение получилось таким:\nВ DI добавили отдельный BuildConfigProvider: interface BuildConfigProvider { val isBaselineBuild: Boolean } В модуле DI создаем реализацию, которая читает флаг из BuildConfig: val buildConfigModule = module { single { object : BuildConfigProvider { override val isBaselineBuild: Boolean get() = BuildConfig.IS_BASELINE_BUILD } } } Например, для типа сборки release плагин создает типы сборки benchmarkRelease и nonMinifiedRelease. Эти типы сборки автоматически настраиваются для конкретного варианта использования и, как правило, не требуют настройки. В Gradle через onVariants помечаем нужный билд-тип (тот самый для baseline, nonMinifiedRelease): androidComponents { onVariants(selector().withBuildType(\"nonMinifiedRelease\")) { variant -\u003e variant.buildConfigFields.put( \"IS_BASELINE_BUILD\", variant.buildConfigField(\"Boolean\", true) ) } } Остальные варианты сборки (обычный release, debug и т.д.) получают false.\nВ DI и коде теперь можно получить: if (buildConfigProvider.isBaselineBuild) { enableLocalRemoteConfig() // окружение для baseline } else { enableRealRemoteConfig() // обычный прод } Получается в итоге:\nдля baseline профильной сборки флаг isBaselineBuild будет true для обычного релиза - false это работает и локально, и на CI, и при automaticGenerationDuringBuild Изначально задача звучала просто: “переключить Remote Config в baseline”.\nНо под капотом оказались:\nособенности Android-процессов в MacroBenchmark ограничения DI особенности nonMinifiedRelease и вариантов сборок различия между release, baseline-release В итоге это вылилось в отдельную небольшую доработку архитектуры вокруг одного флага и билд-типа, которую вряд ли получится придумать с первого раза, не пройдя через пару неудачных вариантов.\nЕсли у вас похожий кейс с baseline и Remote Config - возможно, эта схема с BuildConfigProvider и отдельным билд-типом с флагом сэкономит вам время и нервы.\n",
+  "wordCount" : "1160",
+  "inLanguage": "en",
+  "datePublished": "2025-12-01T19:38:22+03:00",
+  "dateModified": "2025-12-01T19:38:22+03:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://androiddevcoding.github.io/posts/baseline-note-post/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Developer Notes",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://androiddevcoding.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://androiddevcoding.github.io/" accesskey="h" title="Developer Notes (Alt + H)">Developer Notes</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Baseline Note Post
+    </h1>
+    <div class="post-meta"><span title='2025-12-01 19:38:22 +0300 MSK'>December 1, 2025</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>Привет. Это небольшая заметка о том, с чем я столкнулся при работе с baseline profile.</p>
+<p>Коротко: baseline профили помогают повышать скорость выполнения кода примерно на 30% уже с первого запуска.
+Но статья не про то, как их настраивать по документации, а про другую боль - что делать, если приложение активно использует Remote Config, а baseline гоняется на релизной сборке.</p>
+<h3 id="контекст-задачи"><strong>Контекст задачи.</strong><a hidden class="anchor" aria-hidden="true" href="#контекст-задачи">#</a></h3>
+<p>Допустим, у нас есть проект, где уже настроен baseline, и внутри приложения есть Remote Config, который позволяет гибко менять поведение фич.
+Baseline profile у нас гоняется на релизной версии, а значит Remote Config там тоже будет релизный, с боевым окружением.
+Remote Config - может быть любой от своей реализации до Firebase Remote Config. У вас многомодульная архитектура.</p>
+<p>Отсюда проблема:
+как в baseline сборке запускать условно &ldquo;дебажный&rdquo; Remote Config, чтобы baseline генерировался в нужном окружении и при этом не ломать релиз.</p>
+<p>На практике сразу вылезло несколько ограничений:</p>
+<ul>
+<li>тесты baseline/benchmark работают в отдельном процессе</li>
+<li>есть ограничения DI во время запуска baseline</li>
+<li>нужно не допустить утечки тестового кода в настоящую релизную сборку</li>
+</ul>
+<h3 id="проблема-1-почему-не-получилось-просто-заинжектить-всё-через-di"><strong>Проблема №1. Почему не получилось просто заинжектить всё через DI</strong><a hidden class="anchor" aria-hidden="true" href="#проблема-1-почему-не-получилось-просто-заинжектить-всё-через-di">#</a></h3>
+<p>Первая мысль была простая: в тестах BaselineProfileGenerator мы сможем заинжектить DI и разрулить окружение Remote Config.
+То есть в тесте мы получаем доступ к DI и переключаем Remote Config из теста напрямую.
+На практике оказалось, что это невозможно по самой природе запуска baseline-тестов:</p>
+<ul>
+<li>тесты действительно запускаются и прогоняются в отдельном процессе</li>
+<li>когда приложение может быть уже закрыто, вручную (а тесты продолжают жить своей жизнью) что говорит о отдельном процесс</li>
+<li>DI, который у нас определен в приложении в app, мы не можем получить из другого процесса/из модуля macrobenchmark</li>
+</ul>
+<p>То есть вариант &ldquo;в тесте берем RemoteConfigProvider из DI и дергаем его напрямую&rdquo; просто не работает. Из macrobenchmark так же мы не можем получить модуль app.</p>
+<h3 id="проблема-2-варианты-переключения-окружения-в-тестах"><strong>Проблема №2. Варианты переключения окружения в тестах.</strong><a hidden class="anchor" aria-hidden="true" href="#проблема-2-варианты-переключения-окружения-в-тестах">#</a></h3>
+<p>Раз DI не подходит, нужно искать способ менять Remote Config снаружи - не залезая напрямую в DI, а дергая приложение извне.
+Сразу на ум приходят базовые компоненты Android-приложения:</p>
+<ol>
+<li>
+<p>Activity
+Есть нюансы. Мы не сможем динамически менять параметры в середине сценария, нам придется каждый раз открывать Activity. Это неудобно и не очень красиво для автоматизации.</p>
+</li>
+<li>
+<p>ContentProvider
+Можно использовать как точку входа, но он срабатывает слишком рано и не дает удобного управляемого протокола.</p>
+</li>
+<li>
+<p>BroadcastReceiver
+Как раз этот вариант показался самым гибким:</p>
+</li>
+</ol>
+<ul>
+<li>мы можем точечно менять конфиги</li>
+<li>есть управляемый контракт через action и extras</li>
+<li>легко дергается из тестов (через adb)</li>
+</ul>
+<p>В итоге выбор пал на BroadcastReceiver.</p>
+<h3 id="как-через-broadcastreceiver-поменять-remote-config"><strong>Как через BroadcastReceiver поменять Remote Config.</strong><a hidden class="anchor" aria-hidden="true" href="#как-через-broadcastreceiver-поменять-remote-config">#</a></h3>
+<p>Я создал WbConfigReceiver, который принимает команду от теста, внутри дергает Remote Config и переключает нужный параметр, плюс при необходимости перезапускает приложение.</p>
+<p>Псевдокод для теста:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span><span style="color:#a6e22e">@RunWith</span>(AndroidJUnit4<span style="color:#f92672">::</span><span style="color:#66d9ef">class</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RandomBaselineTest</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> packageName = <span style="color:#e6db74">&#34;com.example.randomapp&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Test</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">applyRemoteConfigAndRun</span>() {
+</span></span><span style="display:flex;"><span>        sendAdbBroadcast(<span style="color:#e6db74">&#34;feature_x_enabled&#34;</span>, <span style="color:#e6db74">&#34;true&#34;</span>)
+</span></span><span style="display:flex;"><span>        killApp()
+</span></span><span style="display:flex;"><span>        runFlow()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">sendAdbBroadcast</span>(name: String, <span style="color:#66d9ef">value</span>: String) {
+</span></span><span style="display:flex;"><span>        device.executeShellCommand(
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;am broadcast &#34;</span> +
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;-a com.example.randomapp.SET_WB_CONFIG &#34;</span> +
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;--es name </span><span style="color:#e6db74">$name</span><span style="color:#e6db74"> &#34;</span> +
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;--es value </span><span style="color:#e6db74">$value</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>И сам ресивер примерно такой:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WbConfigReceiver</span> : BroadcastReceiver() {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">onReceive</span>(context: Context?, intent: Intent?) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (intent<span style="color:#f92672">?.</span>action <span style="color:#f92672">!=</span> <span style="color:#e6db74">&#34;com.example.randomapp.SET_WB_CONFIG&#34;</span>) <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">val</span> name = intent.getStringExtra(<span style="color:#e6db74">&#34;name&#34;</span>) <span style="color:#f92672">?:</span> <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">val</span> value = intent.getStringExtra(<span style="color:#e6db74">&#34;value&#34;</span>) <span style="color:#f92672">?:</span> <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        WbApi().setConfig(name, <span style="color:#66d9ef">value</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>В целом это работало хорошо, пока не появилась следующая проблема.</p>
+<h3 id="проблема-3-этот-wbconfigreceiver-нельзя-выпускать-в-релиз"><strong>Проблема №3. Этот WbConfigReceiver нельзя выпускать в релиз</strong><a hidden class="anchor" aria-hidden="true" href="#проблема-3-этот-wbconfigreceiver-нельзя-выпускать-в-релиз">#</a></h3>
+<p>По безопасности и здравому смыслу такой механизм нельзя оставлять доступным в релизной сборке.
+Решение: вынести этот код в отдельный билд-тип, который используется только для baseline и не попадает в настоящий release.
+Билд-тип вида nonMinifiedRelease (суть в том, что это специальный вариант для baseline/benchmark).
+Он присутствует только в вариантах для baseline и не попадает в продактовый release.</p>
+<h3 id="проблема-4-как-определить-окружение-baseline-внутри-di"><strong>Проблема №4. Как определить окружение baseline внутри DI</strong><a hidden class="anchor" aria-hidden="true" href="#проблема-4-как-определить-окружение-baseline-внутри-di">#</a></h3>
+<p>Допустим, у нас в DI есть простое разветвление для релиза и дебага:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">BuildConfig</span>.DEBUG) {
+</span></span><span style="display:flex;"><span>    enableDebugRemoteConfig()
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    enableRealRemoteConfig()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>И мы хотим добавить к этому baseline. Напрашивается что-то вроде:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">BuildConfig</span>.DEBUG <span style="color:#f92672">||</span> <span style="color:#a6e22e">BuildConfig</span>.IS_BASELINE_RELEASE) {
+</span></span><span style="display:flex;"><span>    enableDebugRemoteConfig()
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    enableRealRemoteConfig()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Теоретически это звучит логично, но дальше возникает вопрос:</p>
+<ul>
+<li>а как именно задавать и определять IS_BASELINE_RELEASE, чтобы понимать, когда у нас baseline, а когда обычный релиз.</li>
+</ul>
+<p>Можно было бы попробовать &ldquo;зашить&rdquo; переменную так:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span>buildTypes {
+</span></span><span style="display:flex;"><span>    release {
+</span></span><span style="display:flex;"><span>        buildConfigField <span style="color:#e6db74">&#34;Boolean&#34;</span>, <span style="color:#e6db74">&#34;IS_BASELINE_RELEASE&#34;</span>, <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    debug {
+</span></span><span style="display:flex;"><span>        buildConfigField <span style="color:#e6db74">&#34;Boolean&#34;</span>, <span style="color:#e6db74">&#34;IS_BASELINE_RELEASE&#34;</span>, <span style="color:#e6db74">&#34;false&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>И в теории это бы работало, но дальше в дело вмешивается CI и automaticGenerationDuringBuild.</p>
+<h3 id="automaticgenerationduringbuild-и-почему-простого-флага-мало"><strong>automaticGenerationDuringBuild и почему простого флага мало</strong><a hidden class="anchor" aria-hidden="true" href="#automaticgenerationduringbuild-и-почему-простого-флага-мало">#</a></h3>
+<p>Локально, если руками запустить baseline командой из Gradle:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span>./gradlew generateReleaseBaselineProfile
+</span></span></code></pre></div><p>все будет отрабатывать корректно.</p>
+<p>Но если у вас есть окружение, где релизы собирает CI, там сценарий обычно такой:</p>
+<ul>
+<li>запускается сборка релиза</li>
+<li>при включенном automaticGenerationDuringBuild baseline профили генерируются автоматически во время билда проекта, без ручного запуска macrobenchmark-тестов</li>
+</ul>
+<p>automaticGenerationDuringBuild - это флаг, который включает или выключает автоматическую генерацию baseline профилей во время сборки проекта.</p>
+<p>И вот тут возникает проблема:
+при билде релиза у нас запускается автоматическая генерация baseline. И нужно два окружения.</p>
+<p>Из-за automaticGenerationDuringBuild у нас при вызове runRelease будет что-то типо:</p>
+<ol>
+<li>Запуск generateReleaseBaselineProfile</li>
+<li>Запуск assembleRelease</li>
+<li>Готовая апк с вшитой оптимизацией baseline.</li>
+</ol>
+<p>Но как нам определить и установить что в 1 пункте должно быть окружение дебаг для RemoteConfig а для 2 пункта окружение релиз для RemoteConfig.</p>
+<ol>
+<li>
+<p>SharedPreferences
+Первая идея - хранить флаг в SharedPreferences и переключать его когда мы будем запускать тест, а читать его в DI при переключение RemoteConfig.
+Это будет работать в каких-то сценариях, но выглядит костыльно и ненадежно.</p>
+</li>
+<li>
+<p>CI переменные
+Вторая идея - брать флаг из CI переменных.
+Но переменная будет одинаковой и при запуске baseline, и при обычном релизе, потому что собирается один и тот же билд.
+Определить изнутри приложения, baseline это или просто release, таким способом не получается.</p>
+</li>
+</ol>
+<h3 id="итоговое-решение-4-отдельный-buildconfig-модуль-и-флаг"><strong>Итоговое решение №4: отдельный BuildConfig модуль и флаг</strong><a hidden class="anchor" aria-hidden="true" href="#итоговое-решение-4-отдельный-buildconfig-модуль-и-флаг">#</a></h3>
+<p>В итоге рабочее решение получилось таким:</p>
+<ol>
+<li>В DI добавили отдельный BuildConfigProvider:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">BuildConfigProvider</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">val</span> isBaselineBuild: Boolean
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="2">
+<li>В модуле DI создаем реализацию, которая читает флаг из BuildConfig:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span><span style="color:#66d9ef">val</span> buildConfigModule = module {
+</span></span><span style="display:flex;"><span>    single&lt;BuildConfigProvider&gt; {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">object</span> <span style="color:#960050;background-color:#1e0010">: </span><span style="color:#a6e22e">BuildConfigProvider</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">val</span> isBaselineBuild: Boolean
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">get</span>() = <span style="color:#a6e22e">BuildConfig</span>.IS_BASELINE_BUILD
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="3">
+<li>Например, для типа сборки release плагин создает типы сборки benchmarkRelease и nonMinifiedRelease.
+Эти типы сборки автоматически настраиваются для конкретного варианта использования и, как правило, не требуют настройки.
+В Gradle через onVariants помечаем нужный билд-тип (тот самый для baseline, nonMinifiedRelease):</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span>androidComponents {
+</span></span><span style="display:flex;"><span>    onVariants(selector().withBuildType(<span style="color:#e6db74">&#34;nonMinifiedRelease&#34;</span>)) { variant <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        variant.buildConfigFields.put(
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;IS_BASELINE_BUILD&#34;</span>,
+</span></span><span style="display:flex;"><span>            variant.buildConfigField(<span style="color:#e6db74">&#34;Boolean&#34;</span>, <span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Остальные варианты сборки (обычный release, debug и т.д.) получают false.</p>
+<ol start="4">
+<li>В DI и коде теперь можно получить:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (buildConfigProvider.isBaselineBuild) {
+</span></span><span style="display:flex;"><span>    enableLocalRemoteConfig() <span style="color:#75715e">// окружение для baseline
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    enableRealRemoteConfig()  <span style="color:#75715e">// обычный прод
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>Получается в итоге:</p>
+<ul>
+<li>для baseline профильной сборки флаг isBaselineBuild будет true</li>
+<li>для обычного релиза - false</li>
+<li>это работает и локально, и на CI, и при automaticGenerationDuringBuild</li>
+</ul>
+<p>Изначально задача звучала просто: &ldquo;переключить Remote Config в baseline&rdquo;.</p>
+<p>Но под капотом оказались:</p>
+<ul>
+<li>особенности Android-процессов в MacroBenchmark</li>
+<li>ограничения DI</li>
+<li>особенности nonMinifiedRelease и вариантов сборок</li>
+<li>различия между release, baseline-release</li>
+</ul>
+<p>В итоге это вылилось в отдельную небольшую доработку архитектуры вокруг одного флага и билд-типа, которую вряд ли получится придумать с первого раза, не пройдя через пару неудачных вариантов.</p>
+<p>Если у вас похожий кейс с baseline и Remote Config - возможно, эта схема с BuildConfigProvider и отдельным билд-типом с флагом сэкономит вам время и нервы.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer><div id="comments">
+    <script src="https://giscus.app/client.js"
+            data-repo="androiddevcoding/androiddevcoding.github.io"
+            data-repo-id="R_kgDOQgd8yw"
+            data-category="General"
+            data-category-id="DIC_kwDOQgd8y84CzQdr"
+            data-mapping="pathname"
+            data-strict="0"
+            data-reactions-enabled="1"
+            data-emit-metadata="0"
+            data-input-position="bottom"
+            data-theme="preferred_color_scheme"
+            data-lang="ru"
+            crossorigin="anonymous"
+            async>
+    </script>
+</div>
+
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://androiddevcoding.github.io/">Developer Notes</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

@@ -2,17 +2,30 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Posts on Developer Notes</title>
-    <link>http://localhost:1313/posts/</link>
+    <link>https://androiddevcoding.github.io/posts/</link>
     <description>Recent content in Posts on Developer Notes</description>
     <generator>Hugo -- 0.152.2</generator>
     <language>ru-ru</language>
-    <lastBuildDate>Mon, 01 Dec 2025 12:00:00 +0300</lastBuildDate>
-    <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 01 Dec 2025 19:38:22 +0300</lastBuildDate>
+    <atom:link href="https://androiddevcoding.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Baseline Note Post</title>
+      <link>https://androiddevcoding.github.io/posts/baseline-note-post/</link>
+      <pubDate>Mon, 01 Dec 2025 19:38:22 +0300</pubDate>
+      <guid>https://androiddevcoding.github.io/posts/baseline-note-post/</guid>
+      <description>&lt;p&gt;Привет. Это небольшая заметка о том, с чем я столкнулся при работе с baseline profile.&lt;/p&gt;
+&lt;p&gt;Коротко: baseline профили помогают повышать скорость выполнения кода примерно на 30% уже с первого запуска.
+Но статья не про то, как их настраивать по документации, а про другую боль - что делать, если приложение активно использует Remote Config, а baseline гоняется на релизной сборке.&lt;/p&gt;
+&lt;h3 id=&#34;контекст-задачи&#34;&gt;&lt;strong&gt;Контекст задачи.&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Допустим, у нас есть проект, где уже настроен baseline, и внутри приложения есть Remote Config, который позволяет гибко менять поведение фич.
+Baseline profile у нас гоняется на релизной версии, а значит Remote Config там тоже будет релизный, с боевым окружением.
+Remote Config - может быть любой от своей реализации до Firebase Remote Config. У вас многомодульная архитектура.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Первый пост</title>
-      <link>http://localhost:1313/posts/pervyi-post/</link>
+      <link>https://androiddevcoding.github.io/posts/pervyi-post/</link>
       <pubDate>Mon, 01 Dec 2025 12:00:00 +0300</pubDate>
-      <guid>http://localhost:1313/posts/pervyi-post/</guid>
+      <guid>https://androiddevcoding.github.io/posts/pervyi-post/</guid>
       <description>&lt;p&gt;Тут будет текст моего первого поста&lt;/p&gt;</description>
     </item>
   </channel>
