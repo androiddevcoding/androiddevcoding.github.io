@@ -1,7 +1,7 @@
 +++
 date = '2025-12-01T19:38:22+03:00'
 draft = false
-title = 'Baseline Note Post'
+title = 'Baseline Profile + Remote Config - рабочее решение для разных окружений'
 comments = true
 +++
 
@@ -221,7 +221,50 @@ if (buildConfigProvider.isBaselineBuild) {
 - для обычного релиза - false
 - это работает и локально, и на CI, и при automaticGenerationDuringBuild
 
-Изначально задача звучала просто: "переключить Remote Config в baseline".
+
+### Как я проверял, что все действительно работает
+Так как речь идет о релизных сборках, просто так залезть внутрь и посмотреть значения не получится у нас release сборка. Лог не будет работать. 
+SharedPreference тоже. Debug включить тоже нет.
+
+Поэтому я проверял поведение в два шага.
+
+Шаг первый. Временный метод, который пишет состояние в файл. Я добавил маленький вспомогательный метод, который логировал текущее состояние в файл:
+- флаг `isBaselineBuild`
+- значение нужного Remote Config параметра
+
+Условно:
+
+```kotlin
+fun logBaselineStateToFile(
+    context: Context,
+    isBaselineBuild: Boolean,
+    remoteConfigValue: String
+) {
+    val file = File(context.filesDir, "baseline_state.txt")
+    file.writeText(
+        "isBaselineBuild=$isBaselineBuild; remoteConfig=$remoteConfigValue"
+    )
+}
+```
+Этот метод вызывался в момент инициализации Remote Config и в di. Можно вызывать где вам виднее для логирования.
+Дальше я просто смотрел файл через adb:
+```kotlin
+adb shell run-as com.example.randomapp cat files/baseline_state.txt
+```
+Так можно было убедиться, что:
+- для baseline сборки isBaselineBuild=true
+- Remote Config действительно подменен на нужное окружение
+
+Шаг второй. Проверка для BroadcastReceiver. Есть ли он в релизе.
+Соберите релизную сборку и установить приложение. Если ресивер есть в манифесте, он будет виден в dumpsys package.
+```kotlin
+adb shell dumpsys package com.example.randomapp | grep WbConfigReceiver
+```
+Если строк нет - ресивера в зарегистрированных компонентах нет.
+Если есть - значит где-то все-таки попал в манифест.
+Так можно проверить именно релизный apk, который ты собрал.
+
+### Изначально задача звучала просто: "переключить Remote Config в baseline".
 
 Но под капотом оказались:
 - особенности Android-процессов в MacroBenchmark
