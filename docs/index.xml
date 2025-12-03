@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Developer Notes</title>
-    <link>http://localhost:1313/</link>
+    <link>https://androiddevcoding.github.io/</link>
     <description>Recent content on Developer Notes</description>
     <generator>Hugo -- 0.152.2</generator>
     <language>ru-ru</language>
     <lastBuildDate>Wed, 03 Dec 2025 20:05:22 +0300</lastBuildDate>
-    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://androiddevcoding.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Автоматизация публикации приложения в Google Play и RuStore: простой рабочий подход</title>
-      <link>http://localhost:1313/posts/automation-publishing-android-googleplay-rustore/</link>
+      <link>https://androiddevcoding.github.io/posts/automation-publishing-android-googleplay-rustore/</link>
       <pubDate>Wed, 03 Dec 2025 20:05:22 +0300</pubDate>
-      <guid>http://localhost:1313/posts/automation-publishing-android-googleplay-rustore/</guid>
-      <description>&lt;p&gt;&lt;img alt=&#34;Описание&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/automation-publishing-android-googleplay-rustore/1.png&#34;&gt;&lt;/p&gt;
+      <guid>https://androiddevcoding.github.io/posts/automation-publishing-android-googleplay-rustore/</guid>
+      <description>&lt;p&gt;&lt;img alt=&#34;Описание&#34; loading=&#34;lazy&#34; src=&#34;https://androiddevcoding.github.io/posts/automation-publishing-android-googleplay-rustore/1.png&#34;&gt;&lt;/p&gt;
 &lt;h3 id=&#34;вступление&#34;&gt;&lt;strong&gt;Вступление&lt;/strong&gt;&lt;/h3&gt;
 &lt;p&gt;Всем привет. Сегодня я бы хотел поговорить про полезные автоматизации в проекте.
 Есть такие вещи, которые реально приносят профит на все сто процентов.
@@ -25,9 +25,9 @@
     </item>
     <item>
       <title>Baseline Profile &#43; Remote Config - рабочее решение для разных окружений</title>
-      <link>http://localhost:1313/posts/baseline-note-post/</link>
+      <link>https://androiddevcoding.github.io/posts/baseline-note-post/</link>
       <pubDate>Mon, 01 Dec 2025 19:38:22 +0300</pubDate>
-      <guid>http://localhost:1313/posts/baseline-note-post/</guid>
+      <guid>https://androiddevcoding.github.io/posts/baseline-note-post/</guid>
       <description>&lt;p&gt;Привет. Это небольшая заметка о том, с чем я столкнулся при работе с baseline profile.&lt;/p&gt;
 &lt;p&gt;Коротко: baseline профили помогают повышать скорость выполнения кода примерно на 30% уже с первого запуска.
 Но статья не про то, как их настраивать по документации, а про другую боль - что делать, если приложение активно использует Remote Config, а baseline гоняется на релизной сборке.&lt;/p&gt;
@@ -38,9 +38,9 @@ Remote Config - может быть любой от своей реализац�
     </item>
     <item>
       <title>Первый пост</title>
-      <link>http://localhost:1313/posts/pervyi-post/</link>
+      <link>https://androiddevcoding.github.io/posts/pervyi-post/</link>
       <pubDate>Mon, 01 Dec 2025 12:00:00 +0300</pubDate>
-      <guid>http://localhost:1313/posts/pervyi-post/</guid>
+      <guid>https://androiddevcoding.github.io/posts/pervyi-post/</guid>
       <description>&lt;p&gt;Тут будет текст моего первого поста&lt;/p&gt;</description>
     </item>
   </channel>
