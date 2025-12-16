@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Git-Hooks on Developer Notes</title>
+    <link>https://androiddevcoding.github.io/tags/git-hooks/</link>
+    <description>Recent content in Git-Hooks on Developer Notes</description>
+    <generator>Hugo -- 0.152.2</generator>
+    <language>ru-ru</language>
+    <lastBuildDate>Tue, 16 Dec 2025 15:43:17 +0300</lastBuildDate>
+    <atom:link href="https://androiddevcoding.github.io/tags/git-hooks/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Android UI-тесты с Maestro без тяжелой инфраструктуры</title>
+      <link>https://androiddevcoding.github.io/posts/android-ui-tests-maestro-pre-push/</link>
+      <pubDate>Tue, 16 Dec 2025 15:43:17 +0300</pubDate>
+      <guid>https://androiddevcoding.github.io/posts/android-ui-tests-maestro-pre-push/</guid>
+      <description>Maestro в Android-проекте: mock flavor, базовые сценарии и локальный прогон UI-тестов через Git pre-push без тяжелой инфраструктуры.</description>
+    </item>
+  </channel>
+</rss>

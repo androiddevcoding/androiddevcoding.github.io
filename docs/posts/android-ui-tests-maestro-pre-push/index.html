@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Android UI-тесты с Maestro без тяжелой инфраструктуры | Developer Notes</title>
+<meta name="keywords" content="android, ui-testing, maestro, kaspresso, git-hooks, pre-push, automation, mock-flavor, ci-cd">
+<meta name="description" content="Maestro в Android-проекте: mock flavor, базовые сценарии и локальный прогон UI-тестов через Git pre-push без тяжелой инфраструктуры.">
+<meta name="author" content="">
+<link rel="canonical" href="https://androiddevcoding.github.io/posts/android-ui-tests-maestro-pre-push/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.343cc480b9ffc8f04ccbe5e968ad674880cab773ec19905e93033065c1e7a804.css" integrity="sha256-NDzEgLn/yPBMy&#43;XpaK1nSIDKt3PsGZBekwMwZcHnqAQ=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://androiddevcoding.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://androiddevcoding.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://androiddevcoding.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://androiddevcoding.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://androiddevcoding.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://androiddevcoding.github.io/posts/android-ui-tests-maestro-pre-push/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+        @media (prefers-color-scheme: light) {
+            .list::-webkit-scrollbar-thumb {
+                border-color: var(--code-bg);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script><meta property="og:url" content="https://androiddevcoding.github.io/posts/android-ui-tests-maestro-pre-push/">
+  <meta property="og:site_name" content="Developer Notes">
+  <meta property="og:title" content="Android UI-тесты с Maestro без тяжелой инфраструктуры">
+  <meta property="og:description" content="Maestro в Android-проекте: mock flavor, базовые сценарии и локальный прогон UI-тестов через Git pre-push без тяжелой инфраструктуры.">
+  <meta property="og:locale" content="ru-ru">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-16T15:43:17+03:00">
+    <meta property="article:modified_time" content="2025-12-16T15:43:17+03:00">
+    <meta property="article:tag" content="Android">
+    <meta property="article:tag" content="Ui-Testing">
+    <meta property="article:tag" content="Maestro">
+    <meta property="article:tag" content="Kaspresso">
+    <meta property="article:tag" content="Git-Hooks">
+    <meta property="article:tag" content="Pre-Push">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android UI-тесты с Maestro без тяжелой инфраструктуры">
+<meta name="twitter:description" content="Maestro в Android-проекте: mock flavor, базовые сценарии и локальный прогон UI-тестов через Git pre-push без тяжелой инфраструктуры.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://androiddevcoding.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Android UI-тесты с Maestro без тяжелой инфраструктуры",
+      "item": "https://androiddevcoding.github.io/posts/android-ui-tests-maestro-pre-push/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Android UI-тесты с Maestro без тяжелой инфраструктуры",
+  "name": "Android UI-тесты с Maestro без тяжелой инфраструктуры",
+  "description": "Maestro в Android-проекте: mock flavor, базовые сценарии и локальный прогон UI-тестов через Git pre-push без тяжелой инфраструктуры.",
+  "keywords": [
+    "android", "ui-testing", "maestro", "kaspresso", "git-hooks", "pre-push", "automation", "mock-flavor", "ci-cd"
+  ],
+  "articleBody": "Давайте подумаем насчет UI-тестирования UI-тесты реально помогают, когда нет ресурса тестировщиков. А если тестировщика нет совсем, то вручную перетестировать приложение каждый раз практически невозможно. Но дело не только в этом. После длительной разработки пользоваться своим приложением становится тяжело - просто не хочется. Есть похожая мысль в геймдеве: когда ты любишь игры, но начинаешь их делать, ты перестаешь их любить. Тут то же самое. Обычно в корпоративной разработке выбирают инструменты вроде Kaspresso: в коде выставляешь test tag, по нему находишь элемент и взаимодействуешь с ним.\nButton( modifier = Modifier.testTag(\"login_button\"), onClick = { } ) { Text(\"Войти\") } Тесты обычно пишутся в папке androidTest, то есть они максимально близки к кодовой базе. Для запуска используют Marathon - дальше остается только настроить окружение, и все готово. Но есть нюанс: такие тесты хоть и хороши, стабильны и близки к коду, время на поддержку уходит существенное.\nЧто же в этом случае делать? Допустим, у нас небольшое приложение: тестировщиков нет (или их очень мало), и тратить время на тестирование не хочется - все уходит в разработку. Kaspresso хоть и работает отлично, но с ним есть определенные сложности, и для написания таких тестов нужен соответствующий уровень. После попытки внедрить Kaspresso в небольшой проект я на себе ощутил, насколько тяжело писать и поддерживать такие тесты. Нужно что-то полегче. Погуглив и посмотрев варианты, найден Maestro инструмент для UI-тестов с очень низким порогом входа.\nОн работает так: у тебя есть отдельное приложение (Maestro Studio), ты подключаешься к эмулятору и прямо в реальном времени выбираешь компоненты - кнопки, текст и так далее. Ты пользуешься приложением как обычно, действия записываются в шаги, и тест готов. Вот так выглядит пример написанных тестов:\nПример Maestro Studio - запись UI-тестов и шагов сценария\nВ целом он работает замечательно, нюансов почти нет. Но возникает вопрос: как этот инструмент поведет себя в больших масштабах? Мне показалось, что он не особо расширяем. Например, в Kaspresso ты можешь из кодовой базы через DI менять какие-то состояния и управлять окружением теста. А здесь у меня так сделать не получилось и это как раз существенный минус. Но для небольшого проекта этот инструмент работает на 100%. Но проект придется немного подготовить: в тестах приложение должно работать на мок-источниках (фейки/стабы), а не на реальных данных.\nПодходы к мокам и тестовому окружению Давайте возьмем самые популярные подходы:\nОтдельный mock-модуль / mock-flavor Mock Web Server (OkHttp MockWebServer) Примеры статей по подходам:\nEspresso testing with Hilt and MockWebServer (PulseLive, Medium) Best practices of UI testing for Android (dev.to) Без адаптации приложения и кода под тесты делать UI-тесты, кажется, будет ошибкой. Сейчас не будем подробно на этом останавливаться - тема уже много раз обсуждалась в сообществе. Выбери подход, который тебе ближе, и наверное легче внедрить, лучше сделать после изучения материала. Я выбрал mock-модуль и реализую репозитории под мок-объекты. Состояния менять не собираюсь - мне нужно проверить базовую работоспособность: запуск экранов и первые состояния, которые замоканы в mock repository. Для небольшого проекта этого достаточно.\nПример структуры проекта с mock-модулем\nВизуально это выглядит так: data-модуль заменяется и подставляется через build variant. Если запустить приложение, оно не будет ходить в интернет - все будет работать локально. Не будем останавливаться с этим все понятно: проект подготовлен под UI-тесты.\nПример файлов тестов Maestro\nДопустим, у нас есть файлы тестов, которые можно запускать в Maestro UI. Если гонять их вручную все будет работать отлично. Но есть нюанс: со временем ты начнешь забывать их запускать или просто не так частно как нужно. Уверяю, забудешь. Или станет лень. Проверено. Решение очевидное - CI/CD, который при вливании кода прогоняет тесты. Maestro спокойно умеет это через CLI. Но если сейчас я скажу: настройте CI/CD, настройте пайплайн - это уже не про легкий вход, а будет тот еще пранк. Но нет. Выбираем решение проще.\nPre-push хук для UI-тестов Что если я хочу запускать на pre-push мои тесты? Есть аргумент против: тесты будут долго запускаться и это будет мешать разработке. И это правда. Но если прогонять только основной тест-кейс, для небольшого проекта этого будет достаточно. Это реально дождаться около 5 минут. Давайте обсудим это подробнее. Что нужно для запуска тестов на pre-push? Для этого напишем скрипт и положим его в pre-push.\nТребования к скрипту:\nпроверяет наличие Android SDK, adb, emulator, Maestro, scrcpy запускает эмулятор, если он не запущен ждет, пока система полностью загрузится билдит новый APK находит сгенерированный APK по указанному пути устанавливает APK на эмулятор с помощью adb install запускает тестовые фалы Maestro из указанного каталога логирование результата и запись видео Это позволит, по сути, не зависеть от CI/CD и сделать локальную реализацию по смыслу результат будет тот же. Если у вас командная разработка, CI/CD имеет смысл настраивать полноценно. Но если вы работаете один, это часто трудозатратно. Поэтому напишем такой скрипт. Я выбираю sh для простоты: под Android и управление эмулятором есть много готовых примеров.\nСхема работы скрипта:\nСхема работы скрипта\nPre-push hook и используемый в нем скрипт:\nПоказать pre-push и скрипт Параметры позволяют гибко настраивать окружение: путь к Android SDK, Maestro, AVD, каталог с тестами, Gradle-таску сборки и путь до APK.\n\u0026 \"C:\\Program Files\\Git\\bin\\bash.exe\" scripts/maestro_emulator_check.sh ` --sdk \"C:\\Users\\codin\\AppData\\Local\\Android\\Sdk\" ` --maestro \"C:\\Users\\codin\\.maestro\\bin\\maestro\" ` --avd Pixel_6_Pro ` --flows testMaestro/mock ` --gradle-task assembleRustoreMockDebug ` --apk app/build/outputs/apk/rustoreMock/debug/app-rustore-mock-debug.apk Пример выше показан для Windows, но сам скрипт должен запускается и на macOS и Linux.\nПараметры скрипта --sdk SDK_PATH\nПуть к Android SDK. Если не указан, скрипт ищет SDK по умолчанию:\nWindows - ~/AppData/Local/Android/Sdk.\n--maestro MAESTRO_PATH\nПуть к исполняемому файлу Maestro (maestro или maestro.bat).\nЕсли не задан - используется версия из PATH.\n--avd AVD_NAME\nИмя AVD. По умолчанию - Pixel_6_Pro.\nИспользуется для запуска или проверки эмулятора, а также для маркировки отчетов. Создайте AVD заранее через Android Studio.\n--flows DIR (алиас --maestro-dir)\nДиректория с Maestro flow-тестами.\nПо умолчанию - testMaestro/mock.\n--gradle-task TASK\nGradle-задача для сборки APK.\nПо умолчанию - assembleRustoreMockDebug.\n--apk APK_PATH\nПуть к собранному APK.\nПо умолчанию - app/build/outputs/apk/rustoreMock/debug/app-rustore-mock-debug.apk.\n--help или -h\nВыводит встроенную справку по параметрам скрипта.\nПример отчета Maestro\nВсе результаты прогона сохраняются в директорию maestro-report/-/, где лежат логи запуска, HTML-отчет Maestro, debug-артефакты, видео выполнения тестов.\nРезультат Когда вы работаете в одиночку, тяжелые инструменты начинают тянуть вниз. Поддержка Kaspresso, стабильных id - на это уходит время, за которое вы могли бы писать фичи. Maestro в моем случае - легкая подстраховка. Это страховка на “экран не открылся”, “кнопка не нажимается” - именно такие риски он закрывает. Настройка и использование Kaspresso в одиночном проекте займут много времени и не всегда окупятся. Maestro уже при первых пушах изменений дал мне то спокойствие: меняешь UI, а базовые сценарии все равно остаются рабочими. Для небольшого проекта этого достаточно поверхностная проверка, быстрый прогон, минимум поддержки. Но если вам нужны сложные сценарии, глубокая проверка логики, контроль и состояний приложения - тяжелые инструменты уже оправданы. Главное выбирать инструмент под задачу. Не стоит заранее городить огромную тестовую инфраструктуру, если проект этого не требует.\n",
+  "wordCount" : "1102",
+  "inLanguage": "en",
+  "datePublished": "2025-12-16T15:43:17+03:00",
+  "dateModified": "2025-12-16T15:43:17+03:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://androiddevcoding.github.io/posts/android-ui-tests-maestro-pre-push/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Developer Notes",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://androiddevcoding.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://androiddevcoding.github.io/" accesskey="h" title="Developer Notes (Alt + H)">Developer Notes</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Android UI-тесты с Maestro без тяжелой инфраструктуры
+    </h1>
+    <div class="post-description">
+      Maestro в Android-проекте: mock flavor, базовые сценарии и локальный прогон UI-тестов через Git pre-push без тяжелой инфраструктуры.
+    </div>
+    <div class="post-meta"><span title='2025-12-16 15:43:17 +0300 MSK'>December 16, 2025</span>
+
+</div>
+  </header> 
+  <div class="post-content"><h3 id="давайте-подумаем-насчет-ui-тестирования">Давайте подумаем насчет UI-тестирования<a hidden class="anchor" aria-hidden="true" href="#давайте-подумаем-насчет-ui-тестирования">#</a></h3>
+<p>UI-тесты реально помогают, когда нет ресурса тестировщиков. А если тестировщика нет совсем, то вручную перетестировать приложение каждый раз практически невозможно.
+Но дело не только в этом. После длительной разработки пользоваться своим приложением становится тяжело - просто не хочется.
+Есть похожая мысль в геймдеве: когда ты любишь игры, но начинаешь их делать, ты перестаешь их любить. Тут то же самое. Обычно в корпоративной разработке выбирают инструменты вроде Kaspresso: в коде выставляешь <em>test tag</em>, по нему находишь элемент и взаимодействуешь с ним.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span>Button(
+</span></span><span style="display:flex;"><span>    modifier = <span style="color:#a6e22e">Modifier</span>.testTag(<span style="color:#e6db74">&#34;login_button&#34;</span>),
+</span></span><span style="display:flex;"><span>    onClick = { }
+</span></span><span style="display:flex;"><span>) { 
+</span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;Войти&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Тесты обычно пишутся в папке androidTest, то есть они максимально близки к кодовой базе.
+Для запуска используют Marathon - дальше остается только настроить окружение, и все готово.
+Но есть нюанс: такие тесты хоть и хороши, стабильны и близки к коду, время на поддержку уходит существенное.</p>
+<h3 id="что-же-в-этом-случае-делать">Что же в этом случае делать?<a hidden class="anchor" aria-hidden="true" href="#что-же-в-этом-случае-делать">#</a></h3>
+<p>Допустим, у нас небольшое приложение: тестировщиков нет (или их очень мало), и тратить время на тестирование не хочется - все уходит в разработку.
+Kaspresso хоть и работает отлично, но с ним есть определенные сложности, и для написания таких тестов нужен соответствующий уровень. После попытки внедрить Kaspresso в небольшой проект я на себе ощутил, насколько тяжело писать и поддерживать такие тесты.
+Нужно что-то полегче. Погуглив и посмотрев варианты, найден Maestro инструмент для UI-тестов с очень низким порогом входа.</p>
+<p>Он работает так: у тебя есть отдельное приложение (Maestro Studio), ты подключаешься к эмулятору и прямо в реальном времени выбираешь компоненты - кнопки, текст и так далее.
+Ты пользуешься приложением как обычно, действия записываются в шаги, и тест готов. Вот так выглядит пример написанных тестов:</p>
+<figure class="align-center ">
+    <img loading="lazy" src="maestroStudioExample.png#center"
+         alt="Пример Maestro Studio - запись UI-тестов и шагов сценария"/> <figcaption>
+            <p>Пример Maestro Studio - запись UI-тестов и шагов сценария</p>
+        </figcaption>
+</figure>
+
+<p>В целом он работает замечательно, нюансов почти нет. Но возникает вопрос: <em>как этот инструмент поведет себя в больших масштабах?</em>
+Мне показалось, что он не особо расширяем. Например, в Kaspresso ты можешь из кодовой базы через DI менять какие-то состояния и управлять окружением теста.
+А здесь у меня так сделать не получилось и это как раз существенный минус. Но для небольшого проекта этот инструмент работает на 100%.
+Но проект придется немного подготовить: в тестах приложение должно работать на мок-источниках (фейки/стабы), а не на реальных данных.</p>
+<h3 id="подходы-к-мокам-и-тестовому-окружению">Подходы к мокам и тестовому окружению<a hidden class="anchor" aria-hidden="true" href="#подходы-к-мокам-и-тестовому-окружению">#</a></h3>
+<p>Давайте возьмем самые популярные подходы:</p>
+<ul>
+<li>Отдельный mock-модуль / mock-flavor</li>
+<li>Mock Web Server (OkHttp MockWebServer)</li>
+</ul>
+<p>Примеры статей по подходам:</p>
+<ul>
+<li><a href="https://medium.com/pulselive/espresso-testing-with-hilt-and-mockwebserver-82f7bcf5a525">Espresso testing with Hilt and MockWebServer (PulseLive, Medium)</a></li>
+<li><a href="https://dev.to/rchugunov/best-practices-of-ui-testing-for-android-5756">Best practices of UI testing for Android (dev.to)</a></li>
+</ul>
+<p>Без адаптации приложения и кода под тесты делать UI-тесты, кажется, будет ошибкой.
+Сейчас не будем подробно на этом останавливаться - тема уже много раз обсуждалась в сообществе.
+Выбери подход, который тебе ближе, и наверное легче внедрить, лучше сделать после изучения материала.
+Я выбрал mock-модуль и реализую репозитории под мок-объекты.
+Состояния менять не собираюсь - мне нужно проверить базовую работоспособность: запуск экранов и первые состояния, которые замоканы в mock repository. Для небольшого проекта этого достаточно.</p>
+<figure class="align-center ">
+    <img loading="lazy" src="exampleDataModule.png#center"
+         alt="Пример структуры проекта с mock-модулем" width="50%"/> <figcaption>
+            <p>Пример структуры проекта с mock-модулем</p>
+        </figcaption>
+</figure>
+
+<p>Визуально это выглядит так: data-модуль заменяется и подставляется через build variant.
+Если запустить приложение, оно не будет ходить в интернет - все будет работать локально.
+Не будем останавливаться с этим все понятно: проект подготовлен под UI-тесты.</p>
+<p><figure class="align-center ">
+    <img loading="lazy" src="exampleMaestoFile.png#center"
+         alt="Пример файлов тестов Maestro"/> <figcaption>
+            <p>Пример файлов тестов Maestro</p>
+        </figcaption>
+</figure>
+
+Допустим, у нас есть файлы тестов, которые можно запускать в Maestro UI.
+Если гонять их вручную все будет работать отлично. Но есть нюанс: <em>со временем ты начнешь забывать их запускать или просто не так частно как нужно</em>. Уверяю, забудешь. Или станет лень. Проверено.
+Решение очевидное - CI/CD, который при вливании кода прогоняет тесты.
+Maestro спокойно умеет это через CLI. Но если сейчас я скажу: настройте CI/CD, настройте пайплайн - это уже не про легкий вход, а будет тот еще пранк. Но нет. Выбираем решение проще.</p>
+<h3 id="pre-push-хук-для-ui-тестов">Pre-push хук для UI-тестов<a hidden class="anchor" aria-hidden="true" href="#pre-push-хук-для-ui-тестов">#</a></h3>
+<p>Что если я хочу запускать на pre-push мои тесты? Есть аргумент против: <em>тесты будут долго запускаться и это будет мешать разработке.</em> И это правда.
+Но если прогонять только основной тест-кейс, для небольшого проекта этого будет достаточно. Это реально дождаться около 5 минут.
+Давайте обсудим это подробнее. Что нужно для запуска тестов на pre-push? Для этого напишем скрипт и положим его в pre-push.</p>
+<p>Требования к скрипту:</p>
+<ul>
+<li>проверяет наличие Android SDK, adb, emulator, Maestro, scrcpy</li>
+<li>запускает эмулятор, если он не запущен</li>
+<li>ждет, пока система полностью загрузится</li>
+<li>билдит новый APK</li>
+<li>находит сгенерированный APK по указанному пути</li>
+<li>устанавливает APK на эмулятор с помощью adb install</li>
+<li>запускает тестовые фалы Maestro из указанного каталога</li>
+<li>логирование результата и запись видео</li>
+</ul>
+<p>Это позволит, по сути, не зависеть от CI/CD и сделать локальную реализацию по смыслу результат будет тот же.
+Если у вас командная разработка, CI/CD имеет смысл настраивать полноценно. Но если вы работаете один, это часто трудозатратно.
+Поэтому напишем такой скрипт. Я выбираю <em>sh</em> для простоты: под Android и управление эмулятором есть много готовых примеров.</p>
+<p>Схема работы скрипта:</p>
+<figure class="align-center ">
+    <img loading="lazy" src="maestro_pre_push_flow.png#center"
+         alt="Схема работы скрипта"/> <figcaption>
+            <p>Схема работы скрипта</p>
+        </figcaption>
+</figure>
+
+<p>Pre-push hook и используемый в нем скрипт:</p>
+<details>
+  <summary>Показать pre-push и скрипт</summary>
+  <script src="https://gist.github.com/androiddevcoding/d7b6158f4d6e0c09680bb6240f3ccc72.js"></script>
+</details>
+<p>Параметры позволяют гибко настраивать окружение: путь к Android SDK, Maestro, AVD, каталог с тестами, Gradle-таску сборки и путь до APK.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span>&amp; <span style="color:#e6db74">&#34;C:</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#e6db74">Program Files</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#e6db74">Git</span><span style="color:#ae81ff">\b</span><span style="color:#e6db74">in</span><span style="color:#ae81ff">\b</span><span style="color:#e6db74">ash.exe&#34;</span> scripts/maestro_emulator_check.sh <span style="color:#960050;background-color:#1e0010">`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">--</span>sdk <span style="color:#e6db74">&#34;C:</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#e6db74">Users</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#e6db74">codin</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#e6db74">AppData</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#e6db74">Local</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#e6db74">Android</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#e6db74">Sdk&#34;</span> <span style="color:#960050;background-color:#1e0010">`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">--</span>maestro <span style="color:#e6db74">&#34;C:</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#e6db74">Users</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#e6db74">codin</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#e6db74">.maestro</span><span style="color:#ae81ff">\b</span><span style="color:#e6db74">in</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#e6db74">maestro&#34;</span> <span style="color:#960050;background-color:#1e0010">`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">--</span>avd Pixel_6_Pro <span style="color:#960050;background-color:#1e0010">`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">--</span>flows testMaestro/mock <span style="color:#960050;background-color:#1e0010">`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">--</span>gradle-task assembleRustoreMockDebug <span style="color:#960050;background-color:#1e0010">`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">--</span>apk app/build/outputs/apk/rustoreMock/debug/app-rustore-mock-debug.apk
+</span></span></code></pre></div><p>Пример выше показан для Windows, но сам скрипт должен запускается и на macOS и Linux.</p>
+<h3 id="параметры-скрипта">Параметры скрипта<a hidden class="anchor" aria-hidden="true" href="#параметры-скрипта">#</a></h3>
+<p><strong><code>--sdk SDK_PATH</code></strong><br>
+Путь к Android SDK. Если не указан, скрипт ищет SDK по умолчанию:<br>
+Windows - <code>~/AppData/Local/Android/Sdk</code>.</p>
+<p><strong><code>--maestro MAESTRO_PATH</code></strong><br>
+Путь к исполняемому файлу Maestro (<code>maestro</code> или <code>maestro.bat</code>).<br>
+Если не задан - используется версия из <code>PATH</code>.</p>
+<p><strong><code>--avd AVD_NAME</code></strong><br>
+Имя AVD. По умолчанию - <code>Pixel_6_Pro</code>.<br>
+Используется для запуска или проверки эмулятора, а также для маркировки отчетов. Создайте AVD заранее через Android Studio.</p>
+<p><strong><code>--flows DIR</code></strong> (алиас <code>--maestro-dir</code>)<br>
+Директория с Maestro flow-тестами.<br>
+По умолчанию - <code>testMaestro/mock</code>.</p>
+<p><strong><code>--gradle-task TASK</code></strong><br>
+Gradle-задача для сборки APK.<br>
+По умолчанию - <code>assembleRustoreMockDebug</code>.</p>
+<p><strong><code>--apk APK_PATH</code></strong><br>
+Путь к собранному APK.<br>
+По умолчанию - <code>app/build/outputs/apk/rustoreMock/debug/app-rustore-mock-debug.apk</code>.</p>
+<p><strong><code>--help</code></strong> или <strong><code>-h</code></strong><br>
+Выводит встроенную справку по параметрам скрипта.</p>
+<figure class="align-center ">
+    <img loading="lazy" src="reportLogsMaestro.png#center"
+         alt="Пример отчета Maestro" width="50%"/> <figcaption>
+            <p>Пример отчета Maestro</p>
+        </figcaption>
+</figure>
+
+<p>Все результаты прогона сохраняются в директорию maestro-report/&lt;AVD_NAME&gt;-<timestamp>/, где лежат логи запуска, HTML-отчет Maestro, debug-артефакты, видео выполнения тестов.</p>
+<h3 id="результат">Результат<a hidden class="anchor" aria-hidden="true" href="#результат">#</a></h3>
+<p>Когда вы работаете в одиночку, тяжелые инструменты начинают тянуть вниз. Поддержка Kaspresso, стабильных id - на это уходит время, за которое вы могли бы писать фичи. Maestro в моем случае - легкая подстраховка. Это страховка на &ldquo;экран не открылся&rdquo;, &ldquo;кнопка не нажимается&rdquo; - именно такие риски он закрывает. Настройка и использование Kaspresso в одиночном проекте займут много времени и не всегда окупятся. Maestro уже при первых пушах изменений дал мне то спокойствие: меняешь UI, а базовые сценарии все равно остаются рабочими. Для небольшого проекта этого достаточно поверхностная проверка, быстрый прогон, минимум поддержки.
+Но если вам нужны сложные сценарии, глубокая проверка логики, контроль и состояний приложения - тяжелые инструменты уже оправданы. Главное выбирать инструмент под задачу. Не стоит заранее городить огромную тестовую инфраструктуру, если проект этого не требует.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://androiddevcoding.github.io/tags/android/">Android</a></li>
+      <li><a href="https://androiddevcoding.github.io/tags/ui-testing/">Ui-Testing</a></li>
+      <li><a href="https://androiddevcoding.github.io/tags/maestro/">Maestro</a></li>
+      <li><a href="https://androiddevcoding.github.io/tags/kaspresso/">Kaspresso</a></li>
+      <li><a href="https://androiddevcoding.github.io/tags/git-hooks/">Git-Hooks</a></li>
+      <li><a href="https://androiddevcoding.github.io/tags/pre-push/">Pre-Push</a></li>
+      <li><a href="https://androiddevcoding.github.io/tags/automation/">Automation</a></li>
+      <li><a href="https://androiddevcoding.github.io/tags/mock-flavor/">Mock-Flavor</a></li>
+      <li><a href="https://androiddevcoding.github.io/tags/ci-cd/">Ci-Cd</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://androiddevcoding.github.io/">Developer Notes</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

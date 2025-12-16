@@ -6,6 +6,70 @@
     <description>Recent content in Tags on Developer Notes</description>
     <generator>Hugo -- 0.152.2</generator>
     <language>ru-ru</language>
+    <lastBuildDate>Tue, 16 Dec 2025 15:43:17 +0300</lastBuildDate>
     <atom:link href="https://androiddevcoding.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Android</title>
+      <link>https://androiddevcoding.github.io/tags/android/</link>
+      <pubDate>Tue, 16 Dec 2025 15:43:17 +0300</pubDate>
+      <guid>https://androiddevcoding.github.io/tags/android/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Automation</title>
+      <link>https://androiddevcoding.github.io/tags/automation/</link>
+      <pubDate>Tue, 16 Dec 2025 15:43:17 +0300</pubDate>
+      <guid>https://androiddevcoding.github.io/tags/automation/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Ci-Cd</title>
+      <link>https://androiddevcoding.github.io/tags/ci-cd/</link>
+      <pubDate>Tue, 16 Dec 2025 15:43:17 +0300</pubDate>
+      <guid>https://androiddevcoding.github.io/tags/ci-cd/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Git-Hooks</title>
+      <link>https://androiddevcoding.github.io/tags/git-hooks/</link>
+      <pubDate>Tue, 16 Dec 2025 15:43:17 +0300</pubDate>
+      <guid>https://androiddevcoding.github.io/tags/git-hooks/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Kaspresso</title>
+      <link>https://androiddevcoding.github.io/tags/kaspresso/</link>
+      <pubDate>Tue, 16 Dec 2025 15:43:17 +0300</pubDate>
+      <guid>https://androiddevcoding.github.io/tags/kaspresso/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Maestro</title>
+      <link>https://androiddevcoding.github.io/tags/maestro/</link>
+      <pubDate>Tue, 16 Dec 2025 15:43:17 +0300</pubDate>
+      <guid>https://androiddevcoding.github.io/tags/maestro/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Mock-Flavor</title>
+      <link>https://androiddevcoding.github.io/tags/mock-flavor/</link>
+      <pubDate>Tue, 16 Dec 2025 15:43:17 +0300</pubDate>
+      <guid>https://androiddevcoding.github.io/tags/mock-flavor/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Pre-Push</title>
+      <link>https://androiddevcoding.github.io/tags/pre-push/</link>
+      <pubDate>Tue, 16 Dec 2025 15:43:17 +0300</pubDate>
+      <guid>https://androiddevcoding.github.io/tags/pre-push/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Ui-Testing</title>
+      <link>https://androiddevcoding.github.io/tags/ui-testing/</link>
+      <pubDate>Tue, 16 Dec 2025 15:43:17 +0300</pubDate>
+      <guid>https://androiddevcoding.github.io/tags/ui-testing/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>

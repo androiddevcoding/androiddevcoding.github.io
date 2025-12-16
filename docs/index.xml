@@ -6,8 +6,15 @@
     <description>Recent content on Developer Notes</description>
     <generator>Hugo -- 0.152.2</generator>
     <language>ru-ru</language>
-    <lastBuildDate>Wed, 03 Dec 2025 20:05:22 +0300</lastBuildDate>
+    <lastBuildDate>Tue, 16 Dec 2025 15:43:17 +0300</lastBuildDate>
     <atom:link href="https://androiddevcoding.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Android UI-тесты с Maestro без тяжелой инфраструктуры</title>
+      <link>https://androiddevcoding.github.io/posts/android-ui-tests-maestro-pre-push/</link>
+      <pubDate>Tue, 16 Dec 2025 15:43:17 +0300</pubDate>
+      <guid>https://androiddevcoding.github.io/posts/android-ui-tests-maestro-pre-push/</guid>
+      <description>Maestro в Android-проекте: mock flavor, базовые сценарии и локальный прогон UI-тестов через Git pre-push без тяжелой инфраструктуры.</description>
+    </item>
     <item>
       <title>Автоматизация публикации приложения в Google Play и RuStore: простой рабочий подход</title>
       <link>https://androiddevcoding.github.io/posts/automation-publishing-android-googleplay-rustore/</link>
