@@ -19,3 +19,22 @@ publishDir = "docs"
 
 [markup.goldmark.renderer]
   unsafe = true
+
+[menu]
+    [[menu.main]]
+    identifier = "home"
+    name = "Главная"
+    url = "/"
+    weight = 1
+
+    [[menu.main]]
+    identifier = "projects"
+    name = "Проекты"
+    url = "/projects/"
+    weight = 2
+
+    [[menu.main]]
+    identifier = "about"
+    name = "Обо мне"
+    url = "/about/"
+    weight = 3
