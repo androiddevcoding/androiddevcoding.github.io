@@ -10,6 +10,7 @@ publishDir = "docs"
 [params]
   defaultTheme = "auto"
   disableSpecial1stPost = true
+  hideFooter = true
 
 [params.assets]
     favicon = "/favicon.ico"
