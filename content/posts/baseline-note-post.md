@@ -3,6 +3,7 @@ date = '2025-12-01T19:38:22+03:00'
 draft = false
 title = 'Baseline Profile + Remote Config - рабочее решение для разных окружений'
 comments = true
+telegram = "https://t.me/codingpas/5"
 +++
 
 Привет. Это небольшая заметка о том, с чем я столкнулся при работе с baseline profile. Коротко: baseline профили помогают повышать скорость выполнения кода примерно на 30% уже с первого запуска.

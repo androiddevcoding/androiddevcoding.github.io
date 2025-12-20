@@ -5,6 +5,8 @@ date = '2025-12-16T15:43:17+03:00'
 tags = ["android", "ui-testing", "maestro", "kaspresso", "git-hooks", "pre-push", "automation", "mock-flavor", "ci-cd"]
 categories = ["Android", "Testing"]
 slug = "android-ui-tests-maestro-pre-push"
+comments = true
+telegram = "https://t.me/codingpas/3"
 +++
 
 ### Давайте подумаем насчет UI-тестирования 

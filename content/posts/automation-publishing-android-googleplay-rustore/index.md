@@ -3,6 +3,7 @@ date = '2025-12-03T20:05:22+03:00'
 draft = false
 title = 'Автоматизация публикации приложения в Google Play и RuStore: простой рабочий подход'
 comments = true
+telegram = "https://t.me/codingpas/4"
 +++
 
 ![Описание](1.png)
